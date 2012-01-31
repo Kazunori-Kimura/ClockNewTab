@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>NewTab</title>
+  <style>
+  html, body {
+   margin: 0px;
+   padding: 0px;
+   background-color: #000011;
+  }
+  div#content {
+   margin: 100px auto;
+   color: #cccccc;
+   text-align: center;
+   font-family: sans-serif;
+   font-size: 64px;
+  }
+  div.app {
+	color: #cccccc;
+	margin: 10px;
+	float: left;
+	text-align: center;
+  }
+  div.app:hover {
+    cursor: pointer;
+  }
+  div.app > img {
+	display: block;
+  }
+  
+  div#trash {
+    position: absolute;
+	bottom: 10px;
+	right: 10px;
+	border: 3px solid #ddd;
+	color: #ddd;
+	padding: 10px;
+  }
+  
+  </style>
+  <script>
+  function $(id){
+   return document.getElementById(id);
+  }
+  
+  
+  // set date-time
+  function repaint(){
+   var d = new Date();
+   var dt = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+   var tm = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+
+   $('date').innerHTML = dt;
+   $('time').innerHTML = tm;
+  }
+  
+  // app launcher
+  function getApps(){
+   chrome.management.getAll(function(info){
+    var apps = [];
+	for(var i=0; i<info.length; i++){
+	 if(info[i].isApp){
+	  apps[apps.length] = info[i];
+	 }
+    }
+	rebuildList(apps);
+   });
+  }
+
+  function getIconURL(app) {
+   if (!app.icons || app.icons.length == 0) {
+    return chrome.extension.getURL("icon.png");
+   }
+   var largest = {size:0};
+   for (var i = 0; i < app.icons.length; i++) {
+    var icon = app.icons[i];
+    if (icon.size > largest.size) {
+      largest = icon;
+    }
+   }
+   return largest.url;
+  }
+
+  function rebuildList(apps){
+   $('apps').innerHTML = '';
+   for(var i=0; i<apps.length; i++){
+    //console.log(JSON.stringify(apps[i]));
+   
+    var div = document.createElement('div');
+	div.className = 'app';
+	div.id = apps[i].id;
+	div.draggable = true;
+	
+	//launch app
+	div.onclick = function(){
+	 chrome.management.launchApp(this.id);
+	 window.close();
+	};
+	//drag app
+	div.ondragstart = function(event){
+	 //console.log(this.id);
+	 event.dataTransfer.setData('text', this.id);
+	};
+	
+    var img = document.createElement("img");
+    img.src = getIconURL(apps[i]);
+    div.appendChild(img);
+	
+	var name = document.createElement('span');
+	name.className = 'appName';
+	name.innerText = apps[i].name;
+	div.appendChild(name);
+	
+	$('apps').appendChild(div);
+   }
+  }
+
+  // uninstall
+  // drop app to trash
+  function dropApp(event){
+   var id = event.dataTransfer.getData('text');
+   //console.log(id);
+   
+   chrome.management.get(id, function(info){
+    var message = chrome.i18n.getMessage('uninstall', info.name);
+    if(confirm(message)){
+     chrome.management.uninstall(id);
+	}
+   });
+   
+   event.preventDefault();
+  }
+  
+  function dragOver(event){
+   event.preventDefault();
+  }
+  
+  // onload
+  function init(){
+   //set date-time
+   repaint();
+   //set app-list
+   getApps();
+   
+   //set event listener
+   chrome.management.onDisabled.addListener(getApps);
+   chrome.management.onEnabled.addListener(getApps);
+   chrome.management.onInstalled.addListener(getApps);
+   chrome.management.onUninstalled.addListener(getApps);
+   
+   //start repaint timer
+   setInterval('repaint()', 30000);
+  }
+  
+  </script>
+ </head>
+ <body onload="init()">
+  <div id="content">
+	<div>
+      <span id="date"></span><br />
+	  <span id="time"></span>
+	</div>
+  </div>
+  <div id="apps"></div>
+  <div id="trash" ondragover="dragOver(event)" ondrop="dropApp(event)">ゴミ箱</div>
+ </body>
+</html>
+

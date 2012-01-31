@@ -1,0 +1,11 @@
+{
+  "name": "__MSG_extName__",
+  "version": "0.1.0",
+  "description":"__MSG_extDescription__",
+  "default_locale": "ja",
+  "incognito": "split",
+  "permissions": ["management"],
+  "chrome_url_overrides": {
+    "newtab": "blank.html"
+  }
+}

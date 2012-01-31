@@ -1,0 +1,17 @@
+{
+  "extName": {
+    "message": "ClockNewTab"
+  },
+  "extDescription": {
+    "message": "新しいタブを置き換え、日時を表示します。"
+  },
+  "uninstall": {
+    "message": "$name$ をアンインストールしますか？",
+	"placeholders": {
+	  "name": {
+	    "content": "$1",
+		"example": "WebApp Name"
+	  }
+	}
+  }
+}

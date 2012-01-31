@@ -1,0 +1,17 @@
+{
+  "extName": {
+    "message": "ClockNewTab"
+  },
+  "extDescription": {
+    "message": "This extention replace \"New Tab\" and display time on \"New Tab\""
+  },
+  "uninstall": {
+    "message": "May I uninstall \"$name$\"?",
+	"placeholders": {
+	  "name": {
+	    "content": "$1",
+		"example": "WebApp Name"
+	  }
+	}
+  }
+}
