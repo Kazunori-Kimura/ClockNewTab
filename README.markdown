@@ -1,7 +1,7 @@
 ClockNewTab
 ========================
 
-新しいタブを置き換え、日時を表示する Google Chrome Extension です。
+新しいタブを置き換え、日時を表示する Google Chrome Extension です。  
 This extention replace "New Tab" and display time on "New Tab"
 
 
@@ -13,5 +13,5 @@ Link
 
 History
 ---------------
-version 0.1.0 2012/01/31
-version 0.2.0 2012/02/04
+version 0.1.0 2012/01/31  
+version 0.2.0 2012/02/04  
